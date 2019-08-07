@@ -1,0 +1,3 @@
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/Videodenoise/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/Videodenoise/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/Videodenoise/cmake-build-debug/CMakeFiles/Videodenoise.dir

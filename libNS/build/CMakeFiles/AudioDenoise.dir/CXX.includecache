@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/main.cpp
+stdio.h
+-
+noise_suppression.h
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/noise_suppression.h
+noise_suppression_x.h
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/noise_suppression_x.h
+

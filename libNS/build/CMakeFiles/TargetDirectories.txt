@@ -1,0 +1,6 @@
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/build/CMakeFiles/rebuild_cache.dir
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/build/CMakeFiles/edit_cache.dir
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/build/CMakeFiles/AudioDenoise.dir
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/build/libNS/CMakeFiles/rebuild_cache.dir
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/build/libNS/CMakeFiles/edit_cache.dir
+/Users/zhanxiaochao/Desktop/AgVideoDenoise/libNS/build/libNS/CMakeFiles/AgNS.dir
