@@ -3,10 +3,11 @@
 #include "noise_suppression_x.h"
 #include "gain_control.h"
 #include "external_resampler.h"
+#include "signal_processing_library.h"
 #include<stdlib.h>
-#define FRAMESIZE 160
+#define FRAMESIZE 320
 
-void AgNSProcess(char * inpath, char  * outpath){
+void AgNSProcess16(char * inpath, char  * outpath){
     
     //ANS solve
     FILE *fpinput, *fpoutput;
@@ -69,13 +70,13 @@ void AgAGCProcess(char * inpath,char * outpath){
     int status;
     int maxLevel = 255;
     int minLevel = 0;
-    int fs = 16000;
+    int fs = 32000;
     short agc_audioFrame[FRAMESIZE];
     short agc_outFrame[FRAMESIZE];
     int inMicLevel = 0;
     int outMicLevel = 0;
     WebRtcAgc_config_t config;
-    WebRtc_UWord8 saturationWarning = 0;
+    uint8_t saturationWarning = 0;
     config.compressionGaindB = 9;
     config.limiterEnable = kAgcTrue;
     config.targetLevelDbfs = 9;
@@ -116,6 +117,98 @@ void AgAGCProcess(char * inpath,char * outpath){
     printf("AGC Finish!\n");
     
 }
+void AgNSProcess32(char *inpath,char *outPath){
+    int nRet = 0;
+    NsHandle *pNS_inst = NULL;
+
+    FILE *fpIn = NULL;
+    FILE *fpOut = NULL;
+
+    char *pInBuffer =NULL;
+    char *pOutBuffer = NULL;
+
+    do
+    {
+        int i = 0;
+        int nFileSize = 0;
+        int nTime = 0;
+        if (0 != WebRtcNs_Create(&pNS_inst))
+        {
+            printf("Noise_Suppression WebRtcNs_Create err! \n");
+            break;
+        }
+
+        if (0 !=  WebRtcNs_Init(pNS_inst,32000))
+        {
+            printf("Noise_Suppression WebRtcNs_Init err! \n");
+            break;
+        }
+        if (0 !=  WebRtcNs_set_policy(pNS_inst,2))
+        {
+            printf("Noise_Suppression WebRtcNs_set_policy err! \n");
+            break;
+        }
+        fpIn = fopen(inpath, "rb");
+        if (NULL == fpIn)
+        {
+            printf("open src file err \n");
+            break;
+        }
+        fseek(fpIn,0,SEEK_END);
+        nFileSize = ftell(fpIn);
+        fseek(fpIn,0,SEEK_SET);
+
+        pInBuffer = (char*)malloc(nFileSize);
+        memset(pInBuffer,0,nFileSize);
+        fread(pInBuffer, sizeof(char), nFileSize, fpIn);
+
+        pOutBuffer = (char*)malloc(nFileSize);
+        memset(pOutBuffer,0,nFileSize);
+
+        int  filter_state1[6],filter_state12[6];
+        int  Synthesis_state1[6],Synthesis_state12[6];
+
+        memset(filter_state1,0,sizeof(filter_state1));
+        memset(filter_state12,0,sizeof(filter_state12));
+        memset(Synthesis_state1,0,sizeof(Synthesis_state1));
+        memset(Synthesis_state12,0,sizeof(Synthesis_state12));
+
+        for (i = 0;i < nFileSize;i+=640)
+        {
+            if (nFileSize - i >= 640)
+            {
+                short shBufferIn[320] = {0};
+
+                short shInL[160],shInH[160];
+                short shOutL[160] = {0},shOutH[160] = {0};
+
+                memcpy(shBufferIn,(char*)(pInBuffer+i),320*sizeof(short));
+                WebRtcSpl_AnalysisQMF(shBufferIn,320,shInL,shInH,filter_state1,filter_state12);
+                printf("**");
+                if (0 == WebRtcNs_Process(pNS_inst ,shInL  ,shInH ,shOutL , shOutH))
+                {
+                    short shBufferOut[320];
+                    WebRtcSpl_SynthesisQMF(shOutL,shOutH,160,shBufferOut,Synthesis_state1,Synthesis_state12);
+                    memcpy(pOutBuffer+i,shBufferOut,320*sizeof(short));
+                }
+            }
+        }
+        fpOut = fopen(outPath, "wb");
+        if (NULL == fpOut)
+        {
+            printf("open out file err! \n");
+            break;
+        }
+        fwrite(pOutBuffer, sizeof(char), nFileSize, fpOut);
+    } while (0);
+
+    WebRtcNs_Free(pNS_inst);
+    fclose(fpIn);
+    fclose(fpOut);
+    free(pInBuffer);
+    free(pOutBuffer);
+
+}
 void AgResampler(char * inpath,char * outpath){
     external_resampler * doResampler = new external_resampler();
     FILE *fApInput,*fAOutput;
@@ -141,10 +234,8 @@ void AgResampler(char * inpath,char * outpath){
 }
 int main(int argc, char** argv)
 {
-    AgNSProcess(argv[1],argv[2]);
-    AgAGCProcess(argv[2],argv[1]);
-    AgNSProcess(argv[1],argv[2]);
-    AgResampler(argv[2],argv[1]);
+    AgNSProcess32(argv[1],argv[2]);
+    AgNSProcess32(argv[2],argv[1]);
     printf("Fininsh !");
     return 0;
 }
