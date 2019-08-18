@@ -70,7 +70,7 @@ void AgAGCProcess(char * inpath,char * outpath){
     int status;
     int maxLevel = 255;
     int minLevel = 0;
-    int fs = 32000;
+    int fs = 16000;
     short agc_audioFrame[FRAMESIZE];
     short agc_outFrame[FRAMESIZE];
     int inMicLevel = 0;
@@ -131,7 +131,6 @@ void AgNSProcess32(char *inpath,char *outPath){
     {
         int i = 0;
         int nFileSize = 0;
-        int nTime = 0;
         if (0 != WebRtcNs_Create(&pNS_inst))
         {
             printf("Noise_Suppression WebRtcNs_Create err! \n");
@@ -215,10 +214,10 @@ void AgResampler(char * inpath,char * outpath){
     fApInput = fopen(inpath, "rb");
     fAOutput = fopen(outpath, "wb");
     int status;
-    int srcSize = 160  ;
-    int dstSize = 320  ;
-    int src_samplerate = 16000;
-    int dst_samplerate = 32000;
+    int srcSize = 320  ;
+    int dstSize = 480  ;
+    int src_samplerate = 32000;
+    int dst_samplerate = 48000;
     short audioframe[srcSize];
     short outframe[dstSize];
     while (!feof(fApInput)) {
@@ -235,7 +234,6 @@ void AgResampler(char * inpath,char * outpath){
 int main(int argc, char** argv)
 {
     AgNSProcess32(argv[1],argv[2]);
-    AgNSProcess32(argv[2],argv[1]);
     printf("Fininsh !");
     return 0;
 }

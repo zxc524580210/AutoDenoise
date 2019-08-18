@@ -28,7 +28,7 @@ int main(int argc, char * argv[]) {
     }
     if(fork()==0)
     {
-        execlp(command,"","-i",srcPath,"-acodec","pcm_s16le_planar","-ar","16000","-ac","1","-f","s16le","./12.pcm",NULL);
+        execlp(command,"","-i",srcPath,"-acodec","pcm_s16le_planar","-ar","32000","-ac","1","-f","s16le","./12.pcm",NULL);
         perror(command);
         exit(errno);
     }
@@ -50,7 +50,7 @@ int main(int argc, char * argv[]) {
     }
     if(fork()==0)
     {
-        execlp(command,"","-f","s16le","-ar","32000","-ac","1","-i","./12.pcm","-i","./12.h264","-vcodec","copy","-f","mp4",dstP.c_str(),NULL);
+        execlp(command,"","-f","s16le","-ar","32000","-ac","1","-i","./13.pcm","-i","./12.h264","-vcodec","copy","-f","mp4",dstP.c_str(),NULL);
         perror(command);
         exit(errno);
     }
