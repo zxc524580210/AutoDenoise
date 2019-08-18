@@ -1,4 +1,7 @@
 # AutoDenoise
+RUN Environment:
+MAC OS or Linux
+Windows need to cmake build every Proj.
 First Step:
 
 ./build_video_denoise.sh
